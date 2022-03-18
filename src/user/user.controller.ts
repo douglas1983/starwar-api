@@ -23,6 +23,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UsePipes(ValidationPipe)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
@@ -39,6 +40,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @UsePipes(ValidationPipe)
   update(@Param('id') _id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(_id, updateUserDto);
   }
