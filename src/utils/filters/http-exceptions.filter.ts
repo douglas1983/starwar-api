@@ -24,11 +24,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? HttpStatus.CONFLICT
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    console.log(
-      'teste',
-
-      exception,
-    );
     const message =
       exception instanceof HttpException
         ? exception.getResponse()

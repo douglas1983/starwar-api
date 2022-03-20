@@ -19,7 +19,8 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateUserDto): Promise<User> {
-    const user = this.findByEmail(data.email);
+    const user = await this.findByEmail(data.email);
+    console.log(user);
     if (user) {
       throw new BadRequestException(
         `User with email ${data.email} already exists`,
