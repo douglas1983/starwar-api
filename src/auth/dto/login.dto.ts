@@ -5,7 +5,5 @@ export class LoginDTO {
   username: string;
 
   @IsString()
-  @MinLength(6)
-  @MaxLength(20)
   password: string;
 }
