@@ -10,17 +10,18 @@ import {
   UsePipes,
   Put,
   UseGuards,
+  Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import { PagnationParams } from '../utils/types/paginationParams';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('user')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -32,6 +33,8 @@ export class UserController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @ApiQuery({
     name: 'page',
@@ -55,18 +58,56 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') _id: string) {
-    return this.userService.findOne(_id);
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('id') _id: string) {
+    const user = await this.userService.findOne(_id);
+    const { password, ...rest } = user;
+    return rest;
   }
 
   @Put(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
-  update(@Param('id') _id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(_id, updateUserDto);
+  async update(
+    @Param('id') _id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req,
+  ) {
+    if (req.user.userId !== Number(_id)) {
+      throw new BadRequestException('You can only update your own profile');
+    }
+
+    const user = await this.userService.update(_id, updateUserDto);
+    const { password, ...rest } = user;
+    return rest;
+  }
+  @Put(':id/password')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  async updatepassowrd(
+    @Param('id') _id: string,
+    @Body() updatepassowrd: UpdatePasswordDTO,
+    @Req() req,
+  ) {
+    if (req.user.userId !== Number(_id)) {
+      throw new BadRequestException('You can only update your own profile');
+    }
+
+    const user = await this.userService.updatePassword(_id, updatepassowrd);
+    const { password, ...rest } = user;
+    return rest;
   }
 
   @Delete(':id')
-  remove(@Param('id') _id: string) {
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id') _id: string, @Req() req) {
+    if (req.user.userId !== Number(_id)) {
+      throw new BadRequestException('You can only delete your own profile');
+    }
     return this.userService.remove(_id);
   }
 }

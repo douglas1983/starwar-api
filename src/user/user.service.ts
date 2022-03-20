@@ -11,6 +11,7 @@ import { PagnationParams } from '../utils/types/paginationParams';
 import { convertOrderby } from '../utils/functions/convertOrderby';
 import { ResponsePagination } from '../utils/types/responsePagination';
 import * as bcrypt from 'bcrypt';
+import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 
 @Injectable()
 export class UserService {
@@ -72,6 +73,27 @@ export class UserService {
 
     return await this.prisma.user.update({
       data,
+      where: { id: +id },
+    });
+  }
+
+  async updatePassword(id: string, data: UpdatePasswordDTO): Promise<User> {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    const isValid = await bcrypt.compare(data.old, user.password);
+
+    if (!isValid) {
+      throw new BadRequestException('Old password is not valid');
+    }
+
+    const hash = await bcrypt.hash(data.new, this.saltOrRounds);
+
+    user.password = hash;
+    return await this.prisma.user.update({
+      data: user,
       where: { id: +id },
     });
   }
