@@ -9,7 +9,7 @@ export class PeopleService {
 
   findAll(page: number): Observable<AxiosResponse<any[]>> {
     return this.httpService
-      .get(`https://swapi.dev/api/people?page=${page}`)
+      .get(`https://swapi.dev/api/people?page=${page} `)
       .pipe(
         map((response) => {
           return response.data.results;

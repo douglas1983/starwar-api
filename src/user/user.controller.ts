@@ -14,8 +14,8 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PagnationParams } from 'src/utils/types/paginationParams';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { PagnationParams } from '../utils/types/paginationParams';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')

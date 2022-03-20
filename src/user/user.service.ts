@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
-import { PagnationParams } from 'src/utils/types/paginationParams';
-import { convertOrderby } from 'src/utils/functions/convertOrderby';
-import { ResponsePagination } from 'src/utils/types/responsePagination';
+import { PagnationParams } from '../utils/types/paginationParams';
+import { convertOrderby } from '../utils/functions/convertOrderby';
+import { ResponsePagination } from '../utils/types/responsePagination';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
