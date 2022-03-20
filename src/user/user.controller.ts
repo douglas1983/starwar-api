@@ -16,7 +16,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PagnationParams } from '../utils/types/paginationParams';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiTags, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
+@ApiTags('user')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
@@ -30,6 +33,23 @@ export class UserController {
 
   @Get()
   @UsePipes(ValidationPipe)
+  @ApiQuery({
+    name: 'page',
+    type: 'number',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'size',
+    type: 'number',
+    allowEmptyValue: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'orderBy',
+    type: 'string',
+    allowEmptyValue: true,
+    required: false,
+  })
   findAll(@Query() { page = 1, size = 10, orderBy = '' }: PagnationParams) {
     return this.userService.findAll({ page, size, orderBy });
   }
